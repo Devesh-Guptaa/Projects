@@ -68,7 +68,7 @@ app.post('/login', async (req, res) => {
               res
                 .cookie('token', token, {
                   secure: true, // Set to true if served over HTTPS
-                  sameSite: 'None',
+                  sameSite: 'none',
                 })
                 .json(userDoc);
             }
@@ -99,6 +99,10 @@ app.get('/profile', (req, res) => {
     res.send(null);
     console.log('No token found');
   }
+});
+
+app.get('/logout', (req, res) => {
+  res.clearCookie('token', '').send('Cookie cleared');
 });
 
 app.listen(process.env.PORT, () => {
