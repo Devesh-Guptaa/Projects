@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Form, Link, useParams } from 'react-router-dom';
 import Perks from '../Perks.jsx';
+import axios from 'axios';
 
 function AccomodatioPage() {
   const { action } = useParams();
@@ -17,6 +18,20 @@ function AccomodatioPage() {
 
   function header(text) {
     return <h2 className='mx-3 text-xl mt-3'>{text}</h2>;
+  }
+
+  async function addPhotoByLink(ev) {
+    ev.preventDefault();
+    const { data } = await axios.post('/upload-by-link', {
+      Link: photoLink,
+    });
+    const photoName = data.path;
+    console.log(photoName);
+
+    setPhotos((prev) => {
+      return [...prev, photoName];
+    });
+    setPhotoLink('');
   }
 
   return (
@@ -71,11 +86,20 @@ function AccomodatioPage() {
                   value={photoLink}
                   onChange={(ev) => setPhotoLink(ev.target.value)}
                 ></input>
-                <button className='bg-gray-200 rounded-2xl px-4'>
+                <button
+                  className='bg-gray-200 rounded-2xl px-4'
+                  onClick={addPhotoByLink}
+                >
                   Add&nbsp;Photo
                 </button>
               </div>
-              <div className='mt-2 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6'>
+              <div className='mt-2 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2'>
+                {photos.length > 0 &&
+                  photos.map((path) => (
+                    <div>
+                      <img src={'http://localhost:3000/uploads/' + path} />
+                    </div>
+                  ))}
                 <button className='flex justify-center gap-2 bg-transparent border rounded-3xl py-12 text-xl text-gray-500'>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
