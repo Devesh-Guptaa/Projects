@@ -26,8 +26,6 @@ function AccomodatioPage() {
       Link: photoLink,
     });
     const photoName = data.path;
-    console.log(photoName);
-
     setPhotos((prev) => {
       return [...prev, photoName];
     });
