@@ -2,6 +2,8 @@ import React, { useContext, useState } from 'react';
 import UserContext from '../context/UserContext';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import BookingPage from './BookingsPage';
+import AccomodationPage from './AccomodationPage';
 
 function AccountPage() {
   const { user, setUser, ready } = useContext(UserContext);
@@ -12,10 +14,13 @@ function AccountPage() {
   }
 
   function linkClasses(type) {
-    var dynamciClassName = 'px-4 py-2';
+    var dynamicClassName = 'px-4 py-2 border rounded-full';
     if (type === subpage)
-      dynamciClassName += ' border rounded-full bg-primary text-white';
-    return dynamciClassName;
+      dynamicClassName += '  bg-primary text-white';
+    else{
+      dynamicClassName += ' bg-gray-200';
+    }
+    return dynamicClassName;
   }
 
   async function Logout() {
@@ -50,16 +55,24 @@ function AccountPage() {
         </Link>
       </nav>
 
-      <div className='text-center max-w-lg mx-auto my-4'>
-        Logged in as {user.Name}, email : {user.Email}
-        <br />
-        <button
-          onClick={Logout}
-          className='bg-primary rounded-full py-1 min-w-full'
-        >
-          Logout
-        </button>
-      </div>
+      {subpage === 'profile' && (
+        <div className='text-center max-w-lg mx-auto my-4'>
+          Logged in as {user.Name}, email : {user.Email}
+          <br />
+          <button
+            onClick={Logout}
+            className='bg-primary rounded-full py-1 min-w-full'
+          >
+            Logout
+          </button>
+        </div>
+      )}
+      {subpage === 'bookings' && (
+        <BookingPage/>
+      )}
+      {subpage === 'places' && (
+        <AccomodationPage/>
+      )}
     </div>
   );
 }

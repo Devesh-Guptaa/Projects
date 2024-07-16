@@ -3,6 +3,8 @@ var cors = require('cors');
 var cookieParser = require('cookie-parser');
 const { default: mongoose } = require('mongoose');
 const UserModel = require('./models/User');
+const imageDownloader = require('image-downloader');
+
 var app = express();
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
@@ -15,6 +17,7 @@ app.use(
     origin: 'http://localhost:5173',
   })
 );
+app.use('/uploads', express.static(__dirname + '/uploads'));
 
 mongoose
   .connect(process.env.MONGO_URL)
@@ -103,6 +106,22 @@ app.get('/profile', (req, res) => {
 
 app.get('/logout', (req, res) => {
   res.clearCookie('token', '').send('Cookie cleared');
+});
+
+app.post('/upload-by-link', async (req, res) => {
+  const { Link } = req.body;
+  const photoName = 'photo' + Date.now() + '.jpg';
+  const desitnationPath = __dirname + '/uploads/' + photoName;
+
+  try {
+    await imageDownloader.image({
+      url: Link,
+      dest: desitnationPath,
+    });
+    res.send({ path: photoName }).status(200);
+  } catch (err) {
+    res.send(err).status(202);
+  }
 });
 
 app.listen(process.env.PORT, () => {

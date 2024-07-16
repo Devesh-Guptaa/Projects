@@ -24,7 +24,7 @@ function RegisterPage() {
     <div className='flex flex-col grow items-center justify-center grow'>
       <div>
         <h1 className='text-center text-2xl mb-4'>Register</h1>
-        <form class='max-w-md mx-auto' onSubmit={sendCredentials}>
+        <form className='max-w-md mx-auto' onSubmit={sendCredentials}>
           <input
             type='text'
             placeholder='Joe Biden'
