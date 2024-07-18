@@ -32,6 +32,29 @@ function AccomodatioPage() {
     setPhotoLink('');
   }
 
+  function uploadPhoto(ev) {
+    const files = ev.target.files;
+    const data = new FormData();
+
+    for (let i = 0; i < files.length; i++) {
+      data.append('photos', files[i]);
+    }
+    axios
+      .post('/upload', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then((response) => {
+        const { data: photoNameArray } = response;
+        console.log(photoNameArray.photoNameArray);
+
+        setPhotos((prev) => {
+          return [...prev, ...photoNameArray.photoNameArray];
+        });
+      });
+  }
+
   return (
     <div>
       {action !== 'new' && (
@@ -95,10 +118,19 @@ function AccomodatioPage() {
                 {photos.length > 0 &&
                   photos.map((path) => (
                     <div>
-                      <img src={'http://localhost:3000/uploads/' + path} />
+                      <img
+                        src={'http://localhost:3000/uploads/' + path}
+                        className='rounded-2xl'
+                      />
                     </div>
                   ))}
-                <button className='flex justify-center gap-2 bg-transparent border rounded-3xl py-12 text-xl text-gray-500'>
+                <label className='cursor-pointer items-center flex justify-center gap-2 bg-transparent border rounded-3xl py-12 text-xl text-gray-500'>
+                  <input
+                    type='file'
+                    className='hidden'
+                    onChange={uploadPhoto}
+                    multiple='true'
+                  ></input>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
@@ -114,7 +146,7 @@ function AccomodatioPage() {
                     />
                   </svg>
                   Upload
-                </button>
+                </label>
               </div>
               {header('Description')}
               <textarea
