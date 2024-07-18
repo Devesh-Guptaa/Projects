@@ -4,10 +4,12 @@ var cookieParser = require('cookie-parser');
 const { default: mongoose } = require('mongoose');
 const UserModel = require('./models/User');
 const imageDownloader = require('image-downloader');
+const fs = require('fs');
 
 var app = express();
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
 
 app.use(express.json());
 app.use(cookieParser());
@@ -122,6 +124,26 @@ app.post('/upload-by-link', async (req, res) => {
   } catch (err) {
     res.send(err).status(202);
   }
+});
+
+const multerMiddleware = multer({ dest: './uploads' });
+
+app.post('/upload', multerMiddleware.array('photos', 100), (req, res) => {
+  var photoNameArray = [];
+  for (let i = 0; i < req.files.length; i++) {
+    const filesInfo = req.files[i];
+
+    var path = __dirname + '\\' + filesInfo.path;
+    const splitArray = filesInfo.originalname.split('.');
+    const extension = splitArray[splitArray.length - 1];
+    const newPath = path + '.' + extension;
+    console.log(newPath);
+
+    fs.renameSync(path, newPath);
+    photoNameArray.push(req.files[i].path.replace('uploads\\', '') + '.' + extension);
+  }
+
+  res.json({ photoNameArray: photoNameArray });
 });
 
 app.listen(process.env.PORT, () => {
